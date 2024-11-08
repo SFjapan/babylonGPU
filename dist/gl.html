@@ -2,21 +2,41 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Babylon.js Sample</title>
+    <title>Babylon GL</title>
     <link rel="stylesheet" href="css.css">
 </head>
 <body>
     <div style=" position: relative;">
         <canvas id="canvas" touch-action="none" style="width: 100%; height: 90vh;"></canvas>
+        <div class="loading-5" id="loading">
+            <p>
+                <span>L</span>
+                <span>o</span>
+                <span>a</span>
+                <span>d</span>
+                <span>i</span>
+                <span>n</span>
+                <span>g</span>
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+            </p>
+        </div>
         <div class="data-navigate">
             <p class="frame-rate" id="fps" >fps:</p>
         </div>
         <div class="change-navigate">
-            <div class="house-count">
+            <div class="model-count">
                 <label for="">
-                    <input  type="range" name="" id="house-count" min="1" max="30" value="10">
-                    <span>house-count:10</span>
+                    <input  type="range" id="model-count" min="1" max="30" value="10">
+                    <span>model-count:10</span>
                 </label>
+            </div>
+            <div class="select-model">
+                <select id="select-model">
+                    <option value="0">house</option>
+                    <option value="1">cat</option>
+                </select>
             </div>
         </div>
     </div>

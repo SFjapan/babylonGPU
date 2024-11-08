@@ -2,12 +2,43 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Babylon.js Sample</title>
+    <title>Babylon GPU</title>
+    <link rel="stylesheet" href="css.css">
 </head>
 <body>
-    <div style="display: flex;">
-        <canvas id="canvas" touch-action="none" style="width: 100%; height: 90vh; position: relative;"></canvas>
-        <div class="fps" style="position: absolute; top: 10px; left: 10px; background-color: white;"></div>
+    <div style=" position: relative;">
+        <canvas id="canvas" touch-action="none" style="width: 100%; height: 90vh;"></canvas>
+        <div class="loading-5" id="loading">
+            <p>
+                <span>L</span>
+                <span>o</span>
+                <span>a</span>
+                <span>d</span>
+                <span>i</span>
+                <span>n</span>
+                <span>g</span>
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+            </p>
+        </div>
+        <div class="data-navigate">
+            <p class="frame-rate" id="fps" >fps:</p>
+        </div>
+        <div class="change-navigate">
+            <div class="model-count">
+                <label for="">
+                    <input  type="range" id="model-count" min="1" max="30" value="10">
+                    <span>model-count:10</span>
+                </label>
+            </div>
+            <div class="select-model">
+                <select id="select-model">
+                    <option value="0">house</option>
+                    <option value="1">cat</option>
+                </select>
+            </div>
+        </div>
     </div>
     <script src="gpu.js"></script>
 </body>
