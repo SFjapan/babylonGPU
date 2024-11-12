@@ -1,10 +1,22 @@
 export const models = [
     {
-        model:"house",
+        name:"house",
         offset:15,
+        scalling:3
     },
     {
-        model:"cat",
-        offset:5
+        name:"cat",
+        offset:1,
+        scalling:10
+    },
+    {
+        name:"fountain",
+        offset:10,
+        scalling:1
+    },
+    {
+        name:"low_poly_camp_fire",
+        offset:10,
+        scalling:0.01
     }
 ];

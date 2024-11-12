@@ -50,8 +50,8 @@ window.addEventListener('DOMContentLoaded', async() => {
         ground.material = g_material;
         ground.receiveShadows = true; // 地面が影を受け取るように設定
         ground.checkCollisions = true;
-        for(let x = 0; x < 13;x++){
-            for(let z = 0; z < 13;z++){
+        for(let x = 0; x < 10;x++){
+            for(let z = 0; z < 10;z++){
                 const model = await SceneLoader.ImportMeshAsync("","./models/","house.glb",scene,null,null,"house");
                 let house = model.meshes[0];
                 house.id = "model";
@@ -113,7 +113,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         }
         //新しくトークンをfalseで作る
         cansellationToken = {cancelled:false};
-        await createModel(models[model_index].model,model_count,models[model_index].offset,cansellationToken);
+        await createModel(models[model_index].name,model_count,models[model_index].offset,cansellationToken);
     }
 
     async function createModel(model:string,count:number,offset:number,token:{cancelled:boolean}){
