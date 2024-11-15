@@ -6,9 +6,11 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { CreateGround } from '@babylonjs/core/Meshes/Builders/groundBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { PrecisionDate, SceneLoader, UniversalCamera, WebGPUEngine } from '@babylonjs/core';
+import { ParticleSystem, PrecisionDate, SceneLoader, UniversalCamera, WebGPUEngine } from '@babylonjs/core';
 import "@babylonjs/loaders";
 import { models } from './models';
+import { campfire_particle,fountain_particle } from './particles';
+
 
 window.addEventListener('DOMContentLoaded', async() => {
     const startCPU = PrecisionDate.Now;
@@ -113,13 +115,14 @@ window.addEventListener('DOMContentLoaded', async() => {
         }
         //新しくトークンをfalseで作る
         cansellationToken = {cancelled:false};
-        await createModel(models[model_index].name,model_count,models[model_index].offset,cansellationToken);
+        await createModel(models[model_index],model_count,cansellationToken);
     }
 
-    async function createModel(model:string,count:number,offset:number,token:{cancelled:boolean}){
+    async function createModel(model:{name:string,offset:number,scalling:number},count:number,token:{cancelled:boolean}){
         //メッシュをすべて削除して作成
         scene.getMeshesById("model").forEach(mesh => mesh.dispose());
-
+        const particles = scene.particleSystems.slice();
+        particles.forEach(particle=>particle.dispose());
         for(let x = 0; x < count;x++){
             for(let z = 0; z < count;z++){
                 if(token.cancelled){
@@ -127,13 +130,60 @@ window.addEventListener('DOMContentLoaded', async() => {
                     scene.getMeshesById("model").forEach(mesh => mesh.dispose());
                     return;
                 }
-                const current_model = await SceneLoader.ImportMeshAsync("","./models/",model+ ".glb",scene,null,null,"house");
-                let mesh = current_model.meshes[0];
-                mesh.id = "model";
-                mesh.position = new Vector3((x*offset)+0,0,(z*offset)+0);
-                mesh.scaling = new Vector3(10,10,10);
+                switch (model.name){
+                    case "house":
+                        createHouse(new Vector3(x,0,z),model.offset,model.scalling);
+                        break;
+                    case "cat":
+                        createCat(new Vector3(x,0,z),model.offset,model.scalling);
+                        break;
+                    case "fountain":
+                        createFountain(new Vector3(x,0,z),model.offset,model.scalling);
+                        break;
+                    case "campfire":
+                        createCampfire(new Vector3(x,0,z),model.offset,model.scalling);
+                        break;
+                    default:
+                        break;
+                }
+                
             }
         }
+    }
+
+    async function createHouse(pos:Vector3,offset:number,scalling:number){
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "house.glb",scene,null,null,"house");
+        let mesh = current_model.meshes[0];
+        mesh.id = "model";
+        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+    }
+    async function createCat(pos:Vector3,offset:number,scalling:number){
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "cat.glb",scene,null,null,"house");
+        let mesh = current_model.meshes[0];
+        mesh.id = "model";
+        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+    }
+    async function createFountain(pos:Vector3,offset:number,scalling:number){
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "fountain.glb",scene,null,null,"house");
+        let mesh = current_model.meshes[0];
+        mesh.id = "model";
+        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+
+        const particle = ParticleSystem.Parse(fountain_particle,scene,"");
+        particle.emitter = new Vector3((pos.x*offset)+0,2.5,(pos.z*offset)+0);
+    }
+    async function createCampfire(pos:Vector3,offset:number,scalling:number){
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "campfire.glb",scene,null,null,"house");
+        let mesh = current_model.meshes[0];
+        mesh.id = "model";
+        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+
+        const particle = ParticleSystem.Parse(campfire_particle,scene,"");
+        particle.emitter = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
     }
     
    

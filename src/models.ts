@@ -6,17 +6,17 @@ export const models = [
     },
     {
         name:"cat",
-        offset:1,
+        offset:5,
         scalling:10
     },
     {
         name:"fountain",
         offset:10,
-        scalling:1
+        scalling:0.5
     },
     {
-        name:"low_poly_camp_fire",
-        offset:10,
+        name:"campfire",
+        offset:5,
         scalling:0.01
     }
 ];
