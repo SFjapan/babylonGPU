@@ -2,7 +2,7 @@ export const models = [
     {
         name:"house",
         offset:15,
-        scalling:3
+        scalling:7
     },
     {
         name:"cat",

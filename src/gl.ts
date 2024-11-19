@@ -2,15 +2,14 @@ import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Vector3, Vector4 } from '@babylonjs/core/Maths/math.vector';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { CreateGround } from '@babylonjs/core/Meshes/Builders/groundBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { CreateSphere, ParticleSystem, PrecisionDate, SceneLoader, ShaderMaterial, UniversalCamera, WebGPUEngine } from '@babylonjs/core';
+import { Mesh,CreateSphere, MeshBuilder, ParticleSystem, PrecisionDate, SceneLoader, ShaderMaterial, UniversalCamera, WebGPUEngine, Material, Texture, ActionManager, ExecuteCodeAction, Action } from '@babylonjs/core';
 import "@babylonjs/loaders";
 import { models } from './models';
 import { campfire_particle,fountain_particle } from './particles';
-
 window.addEventListener('DOMContentLoaded', async() => {
     const startCPU = PrecisionDate.Now;
     
@@ -38,31 +37,41 @@ window.addEventListener('DOMContentLoaded', async() => {
         camera.keysDown.push(83);  // Sキー
         camera.keysLeft.push(65);  // Aキー
         camera.keysRight.push(68); // Dキー
+
         //当たり判定
         camera.checkCollisions = true;
         //ライトの設定
         const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
         light.intensity = 1;
-        
+
+        const box_material = new StandardMaterial("box_material");
+        box_material.diffuseTexture = new Texture("./imgs/fruits.png");
+
+        const faceUV = [];
+        faceUV[0] = new Vector4(0.165,0,0.33,1);//背面の果物
+        faceUV[1] = new Vector4(0.0,0.0,0.165,1);//前面の果物
+        faceUV[2] = new Vector4(0.33,0.0,0.5,1);//右面の果物
+        faceUV[3] = new Vector4(0.5,0.0,0.665,1);//左面の果物
+        faceUV[4] = new Vector4(0.665,0.0,0.8,1);//上面の果物
+        faceUV[5] = new Vector4(0.8,0.0,1,1);//下面の果物
+
+        const box = MeshBuilder.CreateBox("box",{faceUV:faceUV,wrap:true},scene);
+        box.material = box_material;
+        box.position = new Vector3(0,3,0);
+        box.checkCollisions = true;
+        let rotation = 0;
+        scene.registerBeforeRender(()=>{
+            box.rotation = new Vector3(0,rotation+=0.01,0);
+        });
+
         // 板の作成（地面として使用）
-        const ground = CreateGround("ground", { width: 100000, height: 100000 }, scene);
+        const ground = MeshBuilder.CreateTiledGround("ground", { xmin: -100, zmin: -100,xmax:100,zmax:100 ,subdivisions:{h:100,w:100}}, scene);
         const g_material = new StandardMaterial("groundmaterial",scene);
-        g_material.diffuseColor = new Color3(0,1,0);
+        g_material.diffuseTexture = new Texture("./imgs/block.png");
         ground.material = g_material;
         ground.receiveShadows = true; // 地面が影を受け取るように設定
         ground.checkCollisions = true;
-        for(let x = 0; x < 10;x++){
-            for(let z = 0; z < 10;z++){
-                const model = await SceneLoader.ImportMeshAsync("","./models/","house.glb",scene,null,null,"house");
-                let house = model.meshes[0];
-                const house_material = new StandardMaterial("housematerial",scene);
-                house_material.diffuseColor = new Color3(0,1,0);
-                house.id = "model";
-                house.material = house_material;
-                house.position = new Vector3((x*15)+0,0,(z*15)+0);
-                house.scaling = new Vector3(10,10,10);
-            }
-        }
+        createHouse(new Vector3(0,0,0),models[0].offset,models[0].scalling);
         
         //house.checkCollisions = true;
         return scene;
@@ -77,6 +86,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         duration = (endCPU - startCPU) / 1000;
         loading.style.display = "none";
         scene_loaded = true;
+        console.log(scene.getNodeByName("box"));
     });
     engine.runRenderLoop(() => {
         scene.render();
