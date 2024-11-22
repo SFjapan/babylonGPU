@@ -6,11 +6,13 @@ import { Vector3, Vector4 } from '@babylonjs/core/Maths/math.vector';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { CreateGround } from '@babylonjs/core/Meshes/Builders/groundBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { Mesh,CreateSphere, MeshBuilder, ParticleSystem, PrecisionDate, SceneLoader, ShaderMaterial, UniversalCamera, WebGPUEngine, Material, Texture, ActionManager, ExecuteCodeAction, Action } from '@babylonjs/core';
+import { Mesh,CreateSphere, MeshBuilder, ParticleSystem, PrecisionDate, SceneLoader, ShaderMaterial, UniversalCamera, WebGPUEngine, Material, Texture, ActionManager, ExecuteCodeAction, Action, CreateBox, CubeTexture } from '@babylonjs/core';
 import "@babylonjs/loaders";
 import { models } from './models';
 import { campfire_particle,fountain_particle } from './particles';
+
 window.addEventListener('DOMContentLoaded', async() => {
+    //初期描画計測開始
     const startCPU = PrecisionDate.Now;
     
     const gl_canvas = document.getElementById('canvas')as unknown as HTMLCanvasElement; // キャンバスの取得
@@ -24,6 +26,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         //カメラの設定
         const camera = new UniversalCamera('UniversalCamera',new Vector3(10,10,10),scene);
         camera.ellipsoid = new Vector3(1, 1, 1);
+        camera.checkCollisions = true;
         //移動速度
         camera.speed = 1;
         //視点移動速度
@@ -31,7 +34,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         //↑→↓←での移動
         camera.attachControl(gl_canvas,true);
         //重力
-        //camera.applyGravity = true;
+        camera.applyGravity = true;
         //WASD対応
         camera.keysUp.push(87);    // Wキー
         camera.keysDown.push(83);  // Sキー
@@ -44,34 +47,25 @@ window.addEventListener('DOMContentLoaded', async() => {
         const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
         light.intensity = 1;
 
-        const box_material = new StandardMaterial("box_material");
-        box_material.diffuseTexture = new Texture("./imgs/fruits.png");
-
-        const faceUV = [];
-        faceUV[0] = new Vector4(0.165,0,0.33,1);//背面の果物
-        faceUV[1] = new Vector4(0.0,0.0,0.165,1);//前面の果物
-        faceUV[2] = new Vector4(0.33,0.0,0.5,1);//右面の果物
-        faceUV[3] = new Vector4(0.5,0.0,0.665,1);//左面の果物
-        faceUV[4] = new Vector4(0.665,0.0,0.8,1);//上面の果物
-        faceUV[5] = new Vector4(0.8,0.0,1,1);//下面の果物
-
-        const box = MeshBuilder.CreateBox("box",{faceUV:faceUV,wrap:true},scene);
-        box.material = box_material;
-        box.position = new Vector3(0,3,0);
-        box.checkCollisions = true;
-        let rotation = 0;
-        scene.registerBeforeRender(()=>{
-            box.rotation = new Vector3(0,rotation+=0.01,0);
-        });
+        //skyboxの作成
+        //全体を覆えるboxをつくる
+        const skybox = CreateBox("skybox",{size:1000},scene);
+        const skybox_material = new StandardMaterial("skybox_material");
+        skybox_material.backFaceCulling = false;
+        skybox_material.reflectionTexture = new CubeTexture("./imgs/skybox/",scene);
+        skybox_material.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+        skybox_material.diffuseColor = new Color3(0, 0, 0);
+        skybox_material.specularColor = new Color3(0, 0, 0);
+        skybox.material = skybox_material;
 
         // 板の作成（地面として使用）
-        const ground = MeshBuilder.CreateTiledGround("ground", { xmin: -100, zmin: -100,xmax:100,zmax:100 ,subdivisions:{h:100,w:100}}, scene);
+        const ground = CreateGround("ground", { width: 100, height: 100 }, scene);
         const g_material = new StandardMaterial("groundmaterial",scene);
-        g_material.diffuseTexture = new Texture("./imgs/block.png");
+        g_material.diffuseTexture = new Texture("./imgs/village_ground.png");
         ground.material = g_material;
         ground.receiveShadows = true; // 地面が影を受け取るように設定
         ground.checkCollisions = true;
-        createHouse(new Vector3(0,0,0),models[0].offset,models[0].scalling);
+        createVillage();
         
         //house.checkCollisions = true;
         return scene;
@@ -163,17 +157,26 @@ window.addEventListener('DOMContentLoaded', async() => {
         }
     }
 
-    async function createHouse(pos:Vector3,offset:number,scalling:number){
+    async function createHouse(pos:Vector3,offset:number,scalling:number,rotation?:Vector3){
         const current_model = await SceneLoader.ImportMeshAsync("","./models/", "house.glb",scene,null,null,"house");
+        //current_model.meshes.map(e=>e.checkCollisions=true);
         let mesh = current_model.meshes[0];
         mesh.id = "model";
+        //mesh.checkCollisions = true;
         mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
+        if(rotation){
+            mesh.rotation = rotation;
+        }
         mesh.scaling = new Vector3(scalling,scalling,scalling);
+       
     }
-    async function createCat(pos:Vector3,offset:number,scalling:number){
+    async function createCat(pos:Vector3,offset:number,scalling:number,rotation?:Vector3){
         const current_model = await SceneLoader.ImportMeshAsync("","./models/", "cat.glb",scene,null,null,"house");
         let mesh = current_model.meshes[0];
         mesh.id = "model";
+        if(rotation){
+            mesh.rotation = rotation;
+        }
         mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
         mesh.scaling = new Vector3(scalling,scalling,scalling);
     }
@@ -185,7 +188,9 @@ window.addEventListener('DOMContentLoaded', async() => {
         mesh.scaling = new Vector3(scalling,scalling,scalling);
 
         const particle = ParticleSystem.Parse(fountain_particle,scene,"");
-        particle.emitter = new Vector3((pos.x*offset)+0,2.5,(pos.z*offset)+0);
+        particle.maxEmitPower = 1;
+        particle.maxSize = 0.2;
+        particle.emitter = new Vector3(mesh.position.x,mesh.position.y+1,mesh.position.z);
     }
     async function createCampfire(pos:Vector3,offset:number,scalling:number){
         const current_model = await SceneLoader.ImportMeshAsync("","./models/", "campfire.glb",scene,null,null,"house");
@@ -196,6 +201,49 @@ window.addEventListener('DOMContentLoaded', async() => {
 
         const particle = ParticleSystem.Parse(campfire_particle,scene,"");
         particle.emitter = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
+    }
+
+    async function createVillage(){
+        //村を作る
+        //家3つ、キャンプファイヤー1つ、噴水1つ
+        //配置はYの字になるように真ん中に噴水一番下にキャンプファイヤーでYのへこみ部分に家
+        createCampfire(new Vector3(3,0,-5),models[3].offset,models[3].scalling);
+        createCat(new Vector3(3.3,0,-5),models[1].offset,models[1].scalling,new Vector3(0,3*Math.PI/3,0));
+        createCat(new Vector3(2.7,0,-5),models[1].offset,models[1].scalling,new Vector3(0,6*Math.PI/-3,0));
+        createCat(new Vector3(3,0,-4.7),models[1].offset,models[1].scalling,new Vector3(0,3*Math.PI/6,0));
+        createFountain(new Vector3(0,0,0),models[2].offset,models[2].scalling);
+        createHouse(new Vector3(0,0,0.75),models[0].offset,models[0].scalling,new Vector3(0,7.5*Math.PI/-10,0));
+        createHouse(new Vector3(0.75,0,0),models[0].offset,models[0].scalling,new Vector3(0,5*-Math.PI/20,0));
+        createHouse(new Vector3(-0.75,0,0),models[0].offset,models[0].scalling,new Vector3(0,5*Math.PI/20,0));
+        createHouse(new Vector3(-0.55,0,-0.75),models[0].offset,models[0].scalling,new Vector3(0,5*Math.PI/10,0));
+    }
+
+    async function createFaceBox(){
+        const box_material = new StandardMaterial("box_material");
+        box_material.diffuseTexture = new Texture("./imgs/fruits.png");
+
+        const faceUV = [];
+        faceUV[0] = new Vector4(0.165,0,0.33,1);//背面の果物
+        faceUV[1] = new Vector4(0.0,0.0,0.165,1);//前面の果物
+        faceUV[2] = new Vector4(0.33,0.0,0.5,1);//右面の果物
+        faceUV[3] = new Vector4(0.5,0.0,0.665,1);//左面の果物
+        faceUV[4] = new Vector4(0.665,0.0,0.8,1);//上面の果物
+        faceUV[5] = new Vector4(0.8,0.0,1,1);//下面の果物
+
+        const box = MeshBuilder.CreateBox("box",{faceUV:faceUV,wrap:true},scene);
+        box.material = box_material;
+        box.position = new Vector3(0,3,0);
+        box.checkCollisions = true;
+
+        let alpha = 0;
+        scene.onBeforeRenderObservable.add(()=>{
+            box.scaling.y = Math.cos(alpha);
+            alpha+=0.01;
+        })
+        let rotation = 0;
+        scene.registerBeforeRender(()=>{
+            box.rotation = new Vector3(0,rotation+=0.01,0);
+        });
     }
     
 });

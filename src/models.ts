@@ -7,7 +7,7 @@ export const models = [
     {
         name:"cat",
         offset:5,
-        scalling:10
+        scalling:3
     },
     {
         name:"fountain",
