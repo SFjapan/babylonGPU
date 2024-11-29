@@ -18,5 +18,10 @@ export const models = [
         name:"campfire",
         offset:5,
         scalling:0.01
+    },
+    {
+        name:"car",
+        offset:3,
+        scalling:1
     }
 ];

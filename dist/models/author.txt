@@ -2,3 +2,4 @@ house:https://sketchfab.com/3d-models/residential-family-house-b36b822986f44ca99
 cat:https://sketchfab.com/3d-models/cat-7e8cbcad506041dc9c3a0cb74edb3360#download
 fountain:https://sketchfab.com/3d-models/fountain-7361f73f3ea6431cb35fd202e91ee681#download
 campfire:https://sketchfab.com/3d-models/low-poly-camp-fire-76a4f7d857c448eb80804bd7db658c61#download
+car:https://sketchfab.com/3d-models/lowpoly-car-pack-94fcef58d8d04af2b6bf42f2949227eb#download
