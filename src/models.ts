@@ -23,5 +23,20 @@ export const models = [
         name:"car",
         offset:3,
         scalling:1
+    },
+    {
+        name:"slide",
+        offset:2,
+        scalling:1
+    },
+    {
+        name:"gas_station",
+        offset:10,
+        scalling:1
+    },
+    {
+        name:"convenience_store",
+        offset:3,
+        scalling:1
     }
 ];

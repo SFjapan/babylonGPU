@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         //↑→↓←での移動
         camera.attachControl(gl_canvas,true);
         //重力
-        camera.applyGravity = true;
+        //camera.applyGravity = true;
         //WASD対応
         camera.keysUp.push(87);    // Wキー
         camera.keysDown.push(83);  // Sキー
@@ -149,7 +149,7 @@ window.addEventListener('DOMContentLoaded', async() => {
        
     }
     async function createCat(pos:Vector3,rotation?:Vector3,offset:number=models[1].offset,scalling:number=models[1].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "cat.glb",scene,null,null,"house");
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "cat.glb",scene,null,null,"cat");
         let mesh = current_model.meshes[0];
         mesh.id = "model";
         if(rotation){
@@ -159,7 +159,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         mesh.scaling = new Vector3(scalling,scalling,scalling);
     }
     async function createFountain(pos:Vector3,offset:number=models[2].offset,scalling:number=models[2].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "fountain.glb",scene,null,null,"house");
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "fountain.glb",scene,null,null,"fountain");
         let mesh = current_model.meshes[0];
         mesh.id = "model";
         mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
@@ -171,7 +171,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         particle.emitter = new Vector3(mesh.position.x,mesh.position.y+1,mesh.position.z);
     }
     async function createCampfire(pos:Vector3,offset:number=models[3].offset,scalling:number=models[3].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "campfire.glb",scene,null,null,"house");
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "campfire.glb",scene,null,null,"campfire");
         let mesh = current_model.meshes[0];
         mesh.id = "model";
         mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
@@ -181,12 +181,9 @@ window.addEventListener('DOMContentLoaded', async() => {
         particle.emitter = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
     }
     async function createCar(pos:Vector3,offset:number=models[4].offset,scalling:number=models[4].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "car.glb",scene,null,null,"house");
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "car.glb",scene,null,null,"car");
         //車輪のアニメーション
-        
-        const wheels = current_model.meshes.slice(2,6);
-        const wheelTexture = new StandardMaterial("wheelTexture");
-        wheelTexture.diffuseTexture = new Texture("./imgs/wheel.png");
+        const wheels = current_model.meshes.slice(17,23);
         wheels.forEach((wheel,i)=>{
             //引数　名前　何に変更を加えるか(今回は回転) フレーム　代入される変数の型　ループのモード
             const wheelAnimation = new Animation(
@@ -197,7 +194,6 @@ window.addEventListener('DOMContentLoaded', async() => {
                                                     Animation.ANIMATIONLOOPMODE_CYCLE
                                                 );
             wheel.rotationQuaternion = null; 
-            wheel.material = wheelTexture;
             if(i<2){
                 const rightwheelKeys = [];
                 rightwheelKeys.push({
@@ -237,11 +233,11 @@ window.addEventListener('DOMContentLoaded', async() => {
         const carKeys = [];
         carKeys.push({
             frame:0,
-            value:new Vector3(3,1,-50)
+            value:new Vector3(3,0,50)
         });
         carKeys.push({
             frame:300,
-            value:new Vector3(3,3,50)
+            value:new Vector3(3,0,-50)
         });
 
         carAnimattion.setKeys(carKeys);
@@ -252,8 +248,33 @@ window.addEventListener('DOMContentLoaded', async() => {
         mesh.id = "model";
         mesh.position = new Vector3((pos.x*offset)+0,1,(pos.z*offset)+0);
         mesh.scaling = new Vector3(scalling,scalling,scalling);
-
     }
+
+    async function createSlide(pos:Vector3,offset:number=models[5].offset,scalling:number=models[5].scalling) {
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "slide.glb",scene,null,null,"slide");
+        const mesh = current_model.meshes[0];
+        current_model.meshes.map(e=>e.scaling=new Vector3(0.5,0.5,0.5));
+        mesh.id = "model";
+        mesh.position = pos;
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+    }
+
+    async function createGasStation(pos:Vector3,offset:number=models[6].offset,scalling:number=models[6].scalling) {
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "gas_station.glb",scene,null,null,"gas_station");
+        const mesh = current_model.meshes[0];
+        mesh.id = "model";
+        mesh.position = pos;
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+    }
+
+    async function createConvenienceStore(pos:Vector3,offset:number=models[7].offset,scalling:number=models[7].scalling) {
+        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "convenience_store.glb",scene,null,null,"convenience_store");
+        const mesh = current_model.meshes[0];
+        mesh.id = "model";
+        mesh.position = pos;
+        mesh.scaling = new Vector3(scalling,scalling,scalling);
+    }
+
     function setGroundMaterial(texture:string){
         if(!scene_loaded)return;
         const ground:GroundMesh = scene.getMeshByName("ground") as GroundMesh;
@@ -289,6 +310,9 @@ window.addEventListener('DOMContentLoaded', async() => {
         createHouse(new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
         createHouse(new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
         createCar(new Vector3(0,0,0));
+        createSlide(new Vector3(30,-0.3,-30));
+        createGasStation(new Vector3(-30,0,30))
+        createConvenienceStore(new Vector3(-30,0,-20))
     }
 
     async function createFaceBox(){

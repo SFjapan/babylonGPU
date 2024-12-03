@@ -3,3 +3,6 @@ cat:https://sketchfab.com/3d-models/cat-7e8cbcad506041dc9c3a0cb74edb3360#downloa
 fountain:https://sketchfab.com/3d-models/fountain-7361f73f3ea6431cb35fd202e91ee681#download
 campfire:https://sketchfab.com/3d-models/low-poly-camp-fire-76a4f7d857c448eb80804bd7db658c61#download
 car:https://sketchfab.com/3d-models/lowpoly-car-pack-94fcef58d8d04af2b6bf42f2949227eb#download
+slide:https://sketchfab.com/3d-models/slide-bfccc771e7fe42559e5742701ae9a908#download
+gas_station:https://sketchfab.com/3d-models/small-red-gas-station-1a0feafb044148e585bfe588afe617b8#download
+convenience_stroe:https://sketchfab.com/3d-models/convenience-store-b4979d79c23f4e24bed3832944849bff#download
