@@ -1,16 +1,20 @@
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
-import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { Vector3, Vector4 } from '@babylonjs/core/Maths/math.vector';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { CreateGround } from '@babylonjs/core/Meshes/Builders/groundBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { Mesh,CreateSphere, MeshBuilder, ParticleSystem, PrecisionDate, SceneLoader, ShaderMaterial, UniversalCamera, WebGPUEngine, Material, Texture, ActionManager, ExecuteCodeAction, Action, CreateBox, CubeTexture, GroundMesh ,Animation, colorCorrectionPixelShader} from '@babylonjs/core';
+import { MeshBuilder,  PrecisionDate, UniversalCamera, Texture, CreateBox, CubeTexture, GroundMesh, WebGPUEngine } from '@babylonjs/core';
 import "@babylonjs/loaders";
-import { models } from './models';
-import { campfire_particle,fountain_particle } from './particles';
-
+import { createHouse } from './models/house';
+import { createCat } from './models/cat';
+import { createFountain } from './models/fountain';
+import { createCampfire } from './models/campfire';
+import { createCar } from './models/car';
+import { createSlide } from './models/slide';
+import { createGasStation } from './models/gas_station';
+import { createConvenienceStore } from './models/convenience_store';
 window.addEventListener('DOMContentLoaded', async() => {
     //初期描画計測開始
     const startCPU = PrecisionDate.Now;
@@ -18,7 +22,7 @@ window.addEventListener('DOMContentLoaded', async() => {
     const gl_canvas = document.getElementById('canvas') as unknown as HTMLCanvasElement; // キャンバスの取得
     let fps = document.getElementById('fps'); //fps表示
     const engine = new WebGPUEngine(gl_canvas); // BABYLONエンジンの初期化
-    await engine.initAsync();    
+    await engine.initAsync();
     const createScene = async function() {
         const scene = new Scene(engine);
         scene.gravity = new Vector3(0, -9.81, 0);
@@ -65,9 +69,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         ground.material = g_material;
         ground.receiveShadows = true; // 地面が影を受け取るように設定
         ground.checkCollisions = true;
-        createTown();
         
-        //house.checkCollisions = true;
         return scene;
     };
 
@@ -75,18 +77,25 @@ window.addEventListener('DOMContentLoaded', async() => {
     let duration = 0;
     const loading = document.getElementById("loading");
     let scene_loaded = false;
+
+    //準備完了
     scene.executeWhenReady(()=>{
         const endCPU = PrecisionDate.Now;
         duration = (endCPU - startCPU) / 1000;
         loading.style.display = "none";
         scene_loaded = true;
+        createVillage();
         console.log(scene.getNodeByName("box"));
     });
+
+    //レンダリング
     engine.runRenderLoop(() => {
         scene.render();
         const current_fps = Math.floor(engine.getFps());
         fps.innerHTML ="fps:" +  current_fps +  "," +  duration.toFixed(2) + "秒";
     });
+
+    //リサイズ
     window.addEventListener('resize', () => {
         engine.resize();
     });
@@ -135,146 +144,6 @@ window.addEventListener('DOMContentLoaded', async() => {
         }
     }
 
-    async function createHouse(pos:Vector3,rotation?:Vector3,offset:number=models[0].offset,scalling:number=models[0].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "house.glb",scene,null,null,"house");
-        //current_model.meshes.map(e=>e.checkCollisions=true);
-        let mesh = current_model.meshes[0];
-        mesh.id = "model";
-        //mesh.checkCollisions = true;
-        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
-        if(rotation){
-            mesh.rotation = rotation;
-        }
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-       
-    }
-    async function createCat(pos:Vector3,rotation?:Vector3,offset:number=models[1].offset,scalling:number=models[1].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "cat.glb",scene,null,null,"cat");
-        let mesh = current_model.meshes[0];
-        mesh.id = "model";
-        if(rotation){
-            mesh.rotation = rotation;
-        }
-        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-    }
-    async function createFountain(pos:Vector3,offset:number=models[2].offset,scalling:number=models[2].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "fountain.glb",scene,null,null,"fountain");
-        let mesh = current_model.meshes[0];
-        mesh.id = "model";
-        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-
-        const particle = ParticleSystem.Parse(fountain_particle,scene,"");
-        particle.maxEmitPower = 1;
-        particle.maxSize = 0.2;
-        particle.emitter = new Vector3(mesh.position.x,mesh.position.y+1,mesh.position.z);
-    }
-    async function createCampfire(pos:Vector3,offset:number=models[3].offset,scalling:number=models[3].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "campfire.glb",scene,null,null,"campfire");
-        let mesh = current_model.meshes[0];
-        mesh.id = "model";
-        mesh.position = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-
-        const particle = ParticleSystem.Parse(campfire_particle,scene,"");
-        particle.emitter = new Vector3((pos.x*offset)+0,0.1,(pos.z*offset)+0);
-    }
-    async function createCar(pos:Vector3,offset:number=models[4].offset,scalling:number=models[4].scalling){
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "car.glb",scene,null,null,"car");
-        //車輪のアニメーション
-        const wheels = current_model.meshes.slice(17,23);
-        wheels.forEach((wheel,i)=>{
-            //引数　名前　何に変更を加えるか(今回は回転) フレーム　代入される変数の型　ループのモード
-            const wheelAnimation = new Animation(
-                                                    "wheelAnimation",
-                                                    "rotation.z",
-                                                    30,
-                                                    Animation.ANIMATIONTYPE_FLOAT,
-                                                    Animation.ANIMATIONLOOPMODE_CYCLE
-                                                );
-            wheel.rotationQuaternion = null; 
-            if(i<2){
-                const rightwheelKeys = [];
-                rightwheelKeys.push({
-                    frame:0,
-                    value:0
-                });
-                rightwheelKeys.push({
-                    frame:30,
-                    value:2 * Math.PI * -1
-                });
-                wheelAnimation.setKeys(rightwheelKeys);
-            }  else{
-                const leftwheelKeys = [];
-                leftwheelKeys.push({
-                    frame:0,
-                    value:0
-                });
-                leftwheelKeys.push({
-                    frame:30,
-                    value:2 * Math.PI
-                });
-                wheelAnimation.setKeys(leftwheelKeys);
-            }       
-            wheel.animations=[];
-            wheel.animations.push(wheelAnimation);
-            scene.beginAnimation(wheel, 0, 30, true);
-        });
-        
-        //車が走っているアニメーション
-        const carAnimattion = new Animation(
-                                            "carAnimation",
-                                            "position",
-                                            30,
-                                            Animation.ANIMATIONTYPE_VECTOR3,
-                                            Animation.ANIMATIONLOOPMODE_CYCLE
-                                        );
-        const carKeys = [];
-        carKeys.push({
-            frame:0,
-            value:new Vector3(3,0,50)
-        });
-        carKeys.push({
-            frame:300,
-            value:new Vector3(3,0,-50)
-        });
-
-        carAnimattion.setKeys(carKeys);
-        let mesh = current_model.meshes[0];
-        mesh.animations = [];
-        mesh.animations.push(carAnimattion);
-        scene.beginAnimation(mesh,0,300,true);
-        mesh.id = "model";
-        mesh.position = new Vector3((pos.x*offset)+0,1,(pos.z*offset)+0);
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-    }
-
-    async function createSlide(pos:Vector3,offset:number=models[5].offset,scalling:number=models[5].scalling) {
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "slide.glb",scene,null,null,"slide");
-        const mesh = current_model.meshes[0];
-        current_model.meshes.map(e=>e.scaling=new Vector3(0.5,0.5,0.5));
-        mesh.id = "model";
-        mesh.position = pos;
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-    }
-
-    async function createGasStation(pos:Vector3,offset:number=models[6].offset,scalling:number=models[6].scalling) {
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "gas_station.glb",scene,null,null,"gas_station");
-        const mesh = current_model.meshes[0];
-        mesh.id = "model";
-        mesh.position = pos;
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-    }
-
-    async function createConvenienceStore(pos:Vector3,offset:number=models[7].offset,scalling:number=models[7].scalling) {
-        const current_model = await SceneLoader.ImportMeshAsync("","./models/", "convenience_store.glb",scene,null,null,"convenience_store");
-        const mesh = current_model.meshes[0];
-        mesh.id = "model";
-        mesh.position = pos;
-        mesh.scaling = new Vector3(scalling,scalling,scalling);
-    }
-
     function setGroundMaterial(texture:string){
         if(!scene_loaded)return;
         const ground:GroundMesh = scene.getMeshByName("ground") as GroundMesh;
@@ -289,30 +158,32 @@ window.addEventListener('DOMContentLoaded', async() => {
         //村を作る
         //家3つ、キャンプファイヤー1つ、噴水1つ
         //配置はYの字になるように真ん中に噴水一番下にキャンプファイヤーでYのへこみ部分に家
+        if(!scene_loaded)return;
         setGroundMaterial("village_ground");
-        createCampfire(new Vector3(3,0,-5));
-        createCat(new Vector3(3.3,0,-5),new Vector3(0,3*Math.PI/3,0));
-        createCat(new Vector3(2.7,0,-5),new Vector3(0,6*Math.PI/-3,0));
-        createCat(new Vector3(3,0,-4.7),new Vector3(0,3*Math.PI/6,0));
-        createFountain(new Vector3(0,0,0));
-        createHouse(new Vector3(0,0,0.75),new Vector3(0,7.5*Math.PI/-10,0));
-        createHouse(new Vector3(0.75,0,0),new Vector3(0,5*-Math.PI/20,0));
-        createHouse(new Vector3(-0.75,0,0),new Vector3(0,5*Math.PI/20,0));
-        createHouse(new Vector3(-0.55,0,-0.75),new Vector3(0,5*Math.PI/10,0));
+        createCampfire(scene,new Vector3(3,0,-5));
+        createCat(scene,new Vector3(3.3,0,-5),new Vector3(0,3*Math.PI/3,0));
+        createCat(scene,new Vector3(2.7,0,-5),new Vector3(0,6*Math.PI/-3,0));
+        createCat(scene,new Vector3(3,0,-4.7),new Vector3(0,3*Math.PI/6,0));
+        createFountain(scene,new Vector3(0,0,0));
+        createHouse(scene,new Vector3(0,0,0.75),new Vector3(0,7.5*Math.PI/-10,0));
+        createHouse(scene,new Vector3(0.75,0,0),new Vector3(0,5*-Math.PI/20,0));
+        createHouse(scene,new Vector3(-0.75,0,0),new Vector3(0,5*Math.PI/20,0));
+        createHouse(scene,new Vector3(-0.55,0,-0.75),new Vector3(0,5*Math.PI/10,0));
     }
 
     async function createTown(){
+        if(!scene_loaded)return;
         setGroundMaterial("town_ground");
-        createHouse(new Vector3(1.3,0,1));
-        createHouse(new Vector3(2.1,0,1));
-        createHouse(new Vector3(2.9,0,1));
-        createHouse(new Vector3(1.1,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createHouse(new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createHouse(new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createCar(new Vector3(0,0,0));
-        createSlide(new Vector3(30,-0.3,-30));
-        createGasStation(new Vector3(-30,0,30))
-        createConvenienceStore(new Vector3(-30,0,-20))
+        createHouse(scene,new Vector3(1.3,0,1));
+        createHouse(scene,new Vector3(2.1,0,1));
+        createHouse(scene,new Vector3(2.9,0,1));
+        createHouse(scene,new Vector3(1.1,0,-1.3),new Vector3(0,10*Math.PI/5,0));
+        createHouse(scene,new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
+        createHouse(scene,new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
+        createCar(scene,new Vector3(0,0,0));
+        createSlide(scene,new Vector3(30,-0.3,-30));
+        createGasStation(scene,new Vector3(-30,0,30))
+        createConvenienceStore(scene,new Vector3(-30,0,-20))
     }
 
     async function createFaceBox(){
