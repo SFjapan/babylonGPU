@@ -201,8 +201,8 @@ window.addEventListener('DOMContentLoaded', async() => {
         createCar(scene,new Vector3(0,0,0),new Vector3(-1,0,50),new Vector3(-1,0,-50));
         createCar(scene,new Vector3(0,0,0),new Vector3(-4,0,-50),new Vector3(-4,0,50),new Vector3(0,10*Math.PI/5,0));
 
-        createBuisnessMan(scene,new Vector3(0.3,0,1),new Vector3(0,3*Math.PI/5,0));
-        createBuisnessMan(scene,new Vector3(0.5,0,1),new Vector3(0,-3*Math.PI/5,0));
+        createBuisnessMan(scene,new Vector3(0.3,1,1),new Vector3(0,3*Math.PI/5,0));
+        createBuisnessMan(scene,new Vector3(0.5,1,1),new Vector3(0,-3*Math.PI/5,0));
     }
 
     async function createFaceBox(){
