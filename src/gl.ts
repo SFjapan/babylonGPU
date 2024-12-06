@@ -132,19 +132,24 @@ window.addEventListener('DOMContentLoaded', async() => {
         scene.getMeshesById("model").forEach(mesh => mesh.dispose());
         const particles = scene.particleSystems.slice();
         particles.forEach(particle=>particle.dispose());
+        const startTime = performance.now();
         switch(scenes[scene_index]){
             case "village":
-                createVillage();
+                await createVillage();
                 break;
             case "town":
-                createTown();
+                await createTown();
                 break;
             case "city":
-                createCity();
+                await createCity();
                 break;
             default:
                 break;            
         }
+        const endTime = performance.now();
+        console.log(endTime - startTime);
+
+        duration = (endTime - startTime)/1000;
     }
 
     function setGroundMaterial(texture:string){
@@ -163,30 +168,30 @@ window.addEventListener('DOMContentLoaded', async() => {
         //配置はYの字になるように真ん中に噴水一番下にキャンプファイヤーでYのへこみ部分に家
         if(!scene_loaded)return;
         setGroundMaterial("village_ground");
-        createCampfire(scene,new Vector3(3,0,-5));
-        createCat(scene,new Vector3(3.3,0,-5),new Vector3(0,3*Math.PI/3,0));
-        createCat(scene,new Vector3(2.7,0,-5),new Vector3(0,6*Math.PI/-3,0));
-        createCat(scene,new Vector3(3,0,-4.7),new Vector3(0,3*Math.PI/6,0));
-        createFountain(scene,new Vector3(0,0,0));
-        createHouse(scene,new Vector3(0,0,0.75),new Vector3(0,7.5*Math.PI/-10,0));
-        createHouse(scene,new Vector3(0.75,0,0),new Vector3(0,5*-Math.PI/20,0));
-        createHouse(scene,new Vector3(-0.75,0,0),new Vector3(0,5*Math.PI/20,0));
-        createHouse(scene,new Vector3(-0.55,0,-0.75),new Vector3(0,5*Math.PI/10,0));
+        await createCampfire(scene,new Vector3(3,0,-5));
+        await createCat(scene,new Vector3(3.3,0,-5),new Vector3(0,3*Math.PI/3,0));
+        await createCat(scene,new Vector3(2.7,0,-5),new Vector3(0,6*Math.PI/-3,0));
+        await createCat(scene,new Vector3(3,0,-4.7),new Vector3(0,3*Math.PI/6,0));
+        await createFountain(scene,new Vector3(0,0,0));
+        await createHouse(scene,new Vector3(0,0,0.75),new Vector3(0,7.5*Math.PI/-10,0));
+        await createHouse(scene,new Vector3(0.75,0,0),new Vector3(0,5*-Math.PI/20,0));
+        await createHouse(scene,new Vector3(-0.75,0,0),new Vector3(0,5*Math.PI/20,0));
+        await createHouse(scene,new Vector3(-0.55,0,-0.75),new Vector3(0,5*Math.PI/10,0));
     }
 
     async function createTown(){
         if(!scene_loaded)return;
         setGroundMaterial("town_ground");
-        createHouse(scene,new Vector3(1.3,0,1));
-        createHouse(scene,new Vector3(2.1,0,1));
-        createHouse(scene,new Vector3(2.9,0,1));
-        createHouse(scene,new Vector3(1.1,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createHouse(scene,new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createHouse(scene,new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createCar(scene,new Vector3(0,0,0),new Vector3(1,0,50),new Vector3(1,0,-50));
-        createSlide(scene,new Vector3(30,-0.3,-30));
-        createGasStation(scene,new Vector3(-30,0,30));
-        createConvenienceStore(scene,new Vector3(-30,0,-20));
+        await createHouse(scene,new Vector3(1.3,0,1));
+        await createHouse(scene,new Vector3(2.1,0,1));
+        await createHouse(scene,new Vector3(2.9,0,1));
+        await createHouse(scene,new Vector3(1.1,0,-1.3),new Vector3(0,10*Math.PI/5,0));
+        await createHouse(scene,new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
+        await createHouse(scene,new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
+        await createCar(scene,new Vector3(0,0,0),new Vector3(1,0,50),new Vector3(1,0,-50));
+        await createSlide(scene,new Vector3(30,-0.3,-30));
+        await createGasStation(scene,new Vector3(-30,0,30));
+        await createConvenienceStore(scene,new Vector3(-30,0,-20));
     }
 
     async function createCity() {
@@ -194,15 +199,15 @@ window.addEventListener('DOMContentLoaded', async() => {
         setGroundMaterial("city_ground");
         for(let x = 0; x < 3;x++){
             for(let y =0; y < 3;y++){
-                createBuilding1(scene,new Vector3(0.2 + (x*1.2),3,0.7 + (y*1.2)));
+                await createBuilding1(scene,new Vector3(0.2 + (x*1.2),3,0.7 + (y*1.2)));
             }
         }
         //createCityPark(scene,new Vector3(-2.7,0,2.7));
-        createCar(scene,new Vector3(0,0,0),new Vector3(-1,0,50),new Vector3(-1,0,-50));
-        createCar(scene,new Vector3(0,0,0),new Vector3(-4,0,-50),new Vector3(-4,0,50),new Vector3(0,10*Math.PI/5,0));
+        await createCar(scene,new Vector3(0,0,0),new Vector3(-1,0,50),new Vector3(-1,0,-50));
+        await createCar(scene,new Vector3(0,0,0),new Vector3(-4,0,-50),new Vector3(-4,0,50),new Vector3(0,10*Math.PI/5,0));
 
-        createBuisnessMan(scene,new Vector3(0.3,1,1),new Vector3(0,3*Math.PI/5,0));
-        createBuisnessMan(scene,new Vector3(0.5,1,1),new Vector3(0,-3*Math.PI/5,0));
+        await createBuisnessMan(scene,new Vector3(0.3,1,1),new Vector3(0,3*Math.PI/5,0));
+        await createBuisnessMan(scene,new Vector3(0.5,1,1),new Vector3(0,-3*Math.PI/5,0));
     }
 
     async function createFaceBox(){
