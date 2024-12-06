@@ -43,5 +43,15 @@ export const models = [
         name:"building01",
         offset:13,
         scalling:5
+    },
+    {
+        name:"city_park",
+        offset:10,
+        scalling:0.7
+    },
+    {
+        name:"buisness_man",
+        offset:5,
+        scalling:1
     }
 ];

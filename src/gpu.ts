@@ -180,7 +180,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         createHouse(scene,new Vector3(1.1,0,-1.3),new Vector3(0,10*Math.PI/5,0));
         createHouse(scene,new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
         createHouse(scene,new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createCar(scene,new Vector3(0,0,0));
+        createCar(scene,new Vector3(0,0,0),new Vector3(1,0,50),new Vector3(1,0,-50));
         createSlide(scene,new Vector3(30,-0.3,-30));
         createGasStation(scene,new Vector3(-30,0,30))
         createConvenienceStore(scene,new Vector3(-30,0,-20))

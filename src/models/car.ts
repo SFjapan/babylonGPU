@@ -1,6 +1,6 @@
 import { Vector3,SceneLoader,Animation,Scene } from "@babylonjs/core";
 import { models } from "../models";
-export async function createCar(scene:Scene,pos:Vector3,offset:number=models[4].offset,scalling:number=models[4].scalling){
+export async function createCar(scene:Scene,pos:Vector3,start:Vector3,end:Vector3,rotation?:Vector3,offset:number=models[4].offset,scalling:number=models[4].scalling){
     const current_model = await SceneLoader.ImportMeshAsync("","./models/", "car.glb",scene,null,null,"car");
     //車輪のアニメーション
     const wheels = current_model.meshes.slice(17,23);
@@ -53,11 +53,11 @@ export async function createCar(scene:Scene,pos:Vector3,offset:number=models[4].
     const carKeys = [];
     carKeys.push({
         frame:0,
-        value:new Vector3(1,0,50)
+        value:start
     });
     carKeys.push({
         frame:300,
-        value:new Vector3(1,0,-50)
+        value:end
     });
 
     carAnimattion.setKeys(carKeys);
@@ -67,5 +67,6 @@ export async function createCar(scene:Scene,pos:Vector3,offset:number=models[4].
     scene.beginAnimation(mesh,0,300,true);
     mesh.id = "model";
     mesh.position = new Vector3((pos.x*offset)+0,1,(pos.z*offset)+0);
+    if(rotation)mesh.rotation = rotation;
     mesh.scaling = new Vector3(scalling,scalling,scalling);
 }

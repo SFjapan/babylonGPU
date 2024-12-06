@@ -1,7 +1,7 @@
 import { Vector3,SceneLoader,Scene } from "@babylonjs/core";
 import { models } from "../models";
 export async function createBuilding1(scene:Scene,pos:Vector3,rotation?:Vector3,offset:number=models[8].offset,scalling:number=models[8].scalling){
-    const current_model = await SceneLoader.ImportMeshAsync("","./models/", "building01.glb",scene,null,null,"cat");
+    const current_model = await SceneLoader.ImportMeshAsync("","./models/", "building01.glb",scene,null,null,"building01");
     let mesh = current_model.meshes[0];
     mesh.id = "model";
     if(rotation){

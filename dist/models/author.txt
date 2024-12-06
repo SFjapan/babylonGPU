@@ -7,3 +7,5 @@ slide:https://sketchfab.com/3d-models/slide-bfccc771e7fe42559e5742701ae9a908#dow
 gas_station:https://sketchfab.com/3d-models/small-red-gas-station-1a0feafb044148e585bfe588afe617b8#download
 convenience_stroe:https://sketchfab.com/3d-models/convenience-store-b4979d79c23f4e24bed3832944849bff#download
 building01:https://sketchfab.com/3d-models/building-02-e22ece3fd35c4bd4a3d90321c1b2a806#download
+city_park:https://sketchfab.com/3d-models/city-park-at-sunset-ec70492df60b4d42b37b7219b7b2149e#download
+buisness_man:https://sketchfab.com/3d-models/buisness-man-with-talking-animation-3fe2b15e0c884b66b987f6f48e420f56#download

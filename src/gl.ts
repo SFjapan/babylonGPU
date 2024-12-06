@@ -16,6 +16,8 @@ import { createSlide } from './models/slide';
 import { createGasStation } from './models/gas_station';
 import { createConvenienceStore } from './models/convenience_store';
 import { createBuilding1 } from './models/buildings'; 
+import { createCityPark } from './models/citypark';
+import { createBuisnessMan } from './models/buisnessman';
 window.addEventListener('DOMContentLoaded', async() => {
     //初期描画計測開始
     const startCPU = PrecisionDate.Now;
@@ -181,10 +183,10 @@ window.addEventListener('DOMContentLoaded', async() => {
         createHouse(scene,new Vector3(1.1,0,-1.3),new Vector3(0,10*Math.PI/5,0));
         createHouse(scene,new Vector3(1.9,0,-1.3),new Vector3(0,10*Math.PI/5,0));
         createHouse(scene,new Vector3(2.7,0,-1.3),new Vector3(0,10*Math.PI/5,0));
-        createCar(scene,new Vector3(0,0,0));
+        createCar(scene,new Vector3(0,0,0),new Vector3(1,0,50),new Vector3(1,0,-50));
         createSlide(scene,new Vector3(30,-0.3,-30));
-        createGasStation(scene,new Vector3(-30,0,30))
-        createConvenienceStore(scene,new Vector3(-30,0,-20))
+        createGasStation(scene,new Vector3(-30,0,30));
+        createConvenienceStore(scene,new Vector3(-30,0,-20));
     }
 
     async function createCity() {
@@ -195,6 +197,12 @@ window.addEventListener('DOMContentLoaded', async() => {
                 createBuilding1(scene,new Vector3(0.2 + (x*1.2),3,0.7 + (y*1.2)));
             }
         }
+        //createCityPark(scene,new Vector3(-2.7,0,2.7));
+        createCar(scene,new Vector3(0,0,0),new Vector3(-1,0,50),new Vector3(-1,0,-50));
+        createCar(scene,new Vector3(0,0,0),new Vector3(-4,0,-50),new Vector3(-4,0,50),new Vector3(0,10*Math.PI/5,0));
+
+        createBuisnessMan(scene,new Vector3(0.3,0,1),new Vector3(0,3*Math.PI/5,0));
+        createBuisnessMan(scene,new Vector3(0.5,0,1),new Vector3(0,-3*Math.PI/5,0));
     }
 
     async function createFaceBox(){
