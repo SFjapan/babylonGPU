@@ -53,11 +53,11 @@ export async function createCar(scene:Scene,pos:Vector3,offset:number=models[4].
     const carKeys = [];
     carKeys.push({
         frame:0,
-        value:new Vector3(3,0,50)
+        value:new Vector3(1,0,50)
     });
     carKeys.push({
         frame:300,
-        value:new Vector3(3,0,-50)
+        value:new Vector3(1,0,-50)
     });
 
     carAnimattion.setKeys(carKeys);

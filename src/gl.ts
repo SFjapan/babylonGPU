@@ -15,6 +15,7 @@ import { createCar } from './models/car';
 import { createSlide } from './models/slide';
 import { createGasStation } from './models/gas_station';
 import { createConvenienceStore } from './models/convenience_store';
+import { createBuilding1 } from './models/buildings'; 
 window.addEventListener('DOMContentLoaded', async() => {
     //初期描画計測開始
     const startCPU = PrecisionDate.Now;
@@ -84,7 +85,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         duration = (endCPU - startCPU) / 1000;
         loading.style.display = "none";
         scene_loaded = true;
-        createVillage();
+        createCity();
         console.log(scene.getNodeByName("box"));
     });
 
@@ -137,7 +138,7 @@ window.addEventListener('DOMContentLoaded', async() => {
                 createTown();
                 break;
             case "city":
-                console.log("まだ");
+                createCity();
                 break;
             default:
                 break;            
@@ -184,6 +185,16 @@ window.addEventListener('DOMContentLoaded', async() => {
         createSlide(scene,new Vector3(30,-0.3,-30));
         createGasStation(scene,new Vector3(-30,0,30))
         createConvenienceStore(scene,new Vector3(-30,0,-20))
+    }
+
+    async function createCity() {
+        if(!scene_loaded)return;
+        setGroundMaterial("city_ground");
+        for(let x = 0; x < 3;x++){
+            for(let y =0; y < 3;y++){
+                createBuilding1(scene,new Vector3(0.2 + (x*1.2),3,0.7 + (y*1.2)));
+            }
+        }
     }
 
     async function createFaceBox(){

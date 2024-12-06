@@ -6,3 +6,4 @@ car:https://sketchfab.com/3d-models/lowpoly-car-pack-94fcef58d8d04af2b6bf42f2949
 slide:https://sketchfab.com/3d-models/slide-bfccc771e7fe42559e5742701ae9a908#download
 gas_station:https://sketchfab.com/3d-models/small-red-gas-station-1a0feafb044148e585bfe588afe617b8#download
 convenience_stroe:https://sketchfab.com/3d-models/convenience-store-b4979d79c23f4e24bed3832944849bff#download
+building01:https://sketchfab.com/3d-models/building-02-e22ece3fd35c4bd4a3d90321c1b2a806#download
