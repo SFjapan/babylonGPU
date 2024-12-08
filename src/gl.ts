@@ -196,6 +196,7 @@ window.addEventListener('DOMContentLoaded', async() => {
 
     async function createCity() {
         if(!scene_loaded)return;
+        await createBuisnessMan(scene,new Vector3(0.3,1,1),new Vector3(0,3*Math.PI/5,0));
         setGroundMaterial("city_ground");
         for(let x = 0; x < 3;x++){
             for(let y =0; y < 3;y++){
@@ -206,7 +207,7 @@ window.addEventListener('DOMContentLoaded', async() => {
         await createCar(scene,new Vector3(0,0,0),new Vector3(-1,0,50),new Vector3(-1,0,-50));
         await createCar(scene,new Vector3(0,0,0),new Vector3(-4,0,-50),new Vector3(-4,0,50),new Vector3(0,10*Math.PI/5,0));
 
-        await createBuisnessMan(scene,new Vector3(0.3,1,1),new Vector3(0,3*Math.PI/5,0));
+        
         await createBuisnessMan(scene,new Vector3(0.5,1,1),new Vector3(0,-3*Math.PI/5,0));
     }
 
